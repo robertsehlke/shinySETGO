@@ -27,10 +27,11 @@ procedure that proved to be helpful to myself, as well as a good learning experi
 ## Note about annotations:
 Annotations for Drosophila and C.elegans were taken from the following bioconductor 
 annotation packages:
-https://bioconductor.org/packages/release/data/annotation/html/org.Dm.eg.db.html
-* Carlson M (2017). org.Dm.eg.db: Genome wide annotation for Fly. R package version 3.5.0.
-https://bioconductor.org/packages/release/data/annotation/html/org.Ce.eg.db.html
-* Carlson M (2017). org.Ce.eg.db: Genome wide annotation for Worm. R package version 3.5.0.
+* https://bioconductor.org/packages/release/data/annotation/html/org.Dm.eg.db.html
+(Carlson M (2017). org.Dm.eg.db: Genome wide annotation for Fly. R package version 3.5.0.)
+
+* https://bioconductor.org/packages/release/data/annotation/html/org.Ce.eg.db.html
+(Carlson M (2017). org.Ce.eg.db: Genome wide annotation for Worm. R package version 3.5.0.)
 
 Additional mappings were taken from BioMart (http://www.biomart.org).
 
