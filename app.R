@@ -3,14 +3,13 @@ library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinythemes)
+library(GO.db)
 library(RMySQL)
 library(DBI)
 library(SETHRO)
 library(Matrix)
-library(GO.db)
 library(cluster)
 library(DT)
-library(shinyBS)
 
 
 # thanks to SBista (https://stackoverflow.com/questions/44319664/r-shiny-condition-a-tab-in-the-navbar-based-on-previous-tabs-condition)
@@ -27,12 +26,16 @@ $('ul li:has(a[data-value= \"Results\"])').removeClass('disabled');
 
 ############################## UI ############################## 
 
-ui = navbarPage(title = "SETHRO", theme = shinytheme("flatly"), id="tabset",
+ui = navbarPage(title = "shinySETGO", theme = shinytheme("flatly"), id="tabset",
                 tabPanel("Analysis",
                          fluidPage( fluidRow(
                            column(1),
                            
-                           column(4, wellPanel( style = "overflow-y:scroll; min-height: 900px; max-height: 900px",
+                           column(4, 
+                                  wellPanel( style = "min-height: 280px; max-height: 280px",
+                                             HTML("<h4><b>Simple enrichment testing for Gene Ontology</b></h4>")),
+                                  
+                                  wellPanel( style = "min-height: 600px; max-height: 600px",
                                                 selectInput("species", label = "Select species", 
                                                             choices = list("Drosophila"="dro", 
                                                                            "C.elegans"="cel")),
@@ -57,7 +60,7 @@ ui = navbarPage(title = "SETHRO", theme = shinytheme("flatly"), id="tabset",
                                                 div(style="display: inline-block;vertical-align:middle", HTML(" input genes in term."))
                            )),
                            
-                           column(3, wellPanel( style = "overflow-y:scroll; min-height: 900px; max-height: 900px",
+                           column(3, wellPanel( style = "min-height: 900px; max-height: 900px",
                                                 fileInput("geneset_file", "Upload geneset (txt file, one gene per line):", multiple = FALSE, accept = c("text", "text/plain", ".txt")), 
                                                 textAreaInput("geneset","OR - paste your geneset (one gene per line):", height = "260px"),
                                                 fileInput("background_file", "Upload custom background set (txt file, one gene per line):", multiple = FALSE, accept = c("text", "text/plain", ".txt")),
@@ -67,7 +70,7 @@ ui = navbarPage(title = "SETHRO", theme = shinytheme("flatly"), id="tabset",
                            ),
                            
                            column(3, 
-                                  wellPanel( style = "overflow-y:scroll; min-height: 900px; max-height: 900px",
+                                  wellPanel( style = "min-height: 900px; max-height: 900px",
                                              actionButton("load_data","Gather input data", style="width:100%"),
                                              htmlOutput("datastats"),
                                              tags$div(id="submit",
@@ -94,6 +97,9 @@ ui = navbarPage(title = "SETHRO", theme = shinytheme("flatly"), id="tabset",
 ############################## SERVER ############################## 
 
 server <- function(input, output,session) {
+  
+  
+  
   output$datastats = renderText(HTML("</br>Upload the set of genes to analyse and click the button above to proceed!"))
   js$disable_results()
   shinyjs::hide("submit")
@@ -188,7 +194,7 @@ server <- function(input, output,session) {
                         paste0( "<b>", bg_go,"</b> GO terms in custom background.</br>",
                                 "<b>", bg_genes,"</b> annotated genes in custom background.</br>" )
                       } else { "" },
-                      "<b>",length(unique(tmp$queryresult[tmp$idx,tmp$id])), "</b> genes annotated.</br>",
+                      "<b>",length(unique(tmp$queryresult[tmp$idx,tmp$id])), "</b> genes of interest annotated.</br>",
                       "<b>",viable, "</b> GO terms with more than ", input$genes_vip, " interesting genes.</br></br>")
         
         output$datastats =
