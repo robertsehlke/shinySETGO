@@ -33,7 +33,11 @@ ui = navbarPage(title = "shinySETGO", theme = shinytheme("flatly"), id="tabset",
                            
                            column(4, 
                                   wellPanel( style = "min-height: 280px; max-height: 280px",
-                                             HTML("<h4><b>Simple enrichment testing for Gene Ontology</b></h4>")),
+                                             HTML("<h4><b>Simple enrichment testing for Gene Ontology</b></h4>"),
+                                             HTML("Determine gene ontology term enrichment in a geneset of interest.</br></br>
+                                                  <ul><li>Genes may be provided as entrez GeneID, Flybase/Wormbase identifiers, or gene names.</br></br>
+                                                  <li>Redundancy is reduced by combining terms that differ in at most 5 significant genes.</ul>
+                                                  <a href='https://github.com/robertsehlke/shinySETGO'>[this project on github]</a>")),
                                   
                                   wellPanel( style = "min-height: 600px; max-height: 600px",
                                                 selectInput("species", label = "Select species", 
@@ -221,6 +225,7 @@ server <- function(input, output,session) {
       this_res = rs.signifDataframe(this_res)
       this_res$secondary_terms[this_res$Is.primary] = sapply( this_res$Primary[this_res$Is.primary], 
                                                             function(x) { paste0(this_res$Term[!this_res$Is.primary & this_res$Primary == x], collapse=", ") } )
+      
       tmp$res = this_res
       js$enable_results()
       
@@ -267,6 +272,7 @@ server <- function(input, output,session) {
   output$downloadResults = downloadHandler(
     filename="results.zip",
     content=function(file) {
+      
       write.table( tmp$res, file = "results.tsv", row.names = FALSE, sep = "\t")
       this_bg = data.frame( "Background_genes"=tmp$bg,
                             "In_annotated"=tmp$bg %in% colnames(tmp$gomatrix),
@@ -277,10 +283,6 @@ server <- function(input, output,session) {
       zip(zipfile = file, files = c("results.tsv", "background.tsv","parameters.tsv"))
     }
   )
-  
-  
- 
-  
   
 }
 
