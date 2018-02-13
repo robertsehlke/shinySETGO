@@ -3,13 +3,8 @@ library(shiny)
 library(shinyjs)
 library(shinyWidgets)
 library(shinythemes)
-library(GO.db)
-library(RMySQL)
-library(DBI)
-library(SETHRO)
-library(Matrix)
-library(cluster)
 library(DT)
+
 
 
 # thanks to SBista (https://stackoverflow.com/questions/44319664/r-shiny-condition-a-tab-in-the-navbar-based-on-previous-tabs-condition)
@@ -102,13 +97,21 @@ ui = navbarPage(title = "shinySETGO", theme = shinytheme("flatly"), id="tabset",
 
 server <- function(input, output,session) {
   
-  
-  
-  output$datastats = renderText(HTML("</br>Upload the set of genes to analyse and click the button above to proceed!"))
   js$disable_results()
   shinyjs::hide("submit")
-                                    
-                                    
+  
+  withProgress(message = "Initializing...",{
+    incProgress(1/3)
+    library(GO.db)
+    library(SETHRO)
+    library(Matrix)
+    library(cluster)
+    incProgress(2/3)
+    library(RMySQL)
+    library(DBI)
+  })
+  
+  output$datastats = renderText(HTML("</br>Upload the set of genes to analyse and click the button above to proceed!"))
   
   dbcon = reactiveValues("c"=NULL)
   tmp = reactiveValues("queryresult"=NULL,
